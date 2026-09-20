@@ -583,11 +583,12 @@ services:
     image: ${CADDY_IMAGE_REF:?Set CADDY_IMAGE_REF to a digest-pinned Caddy image ref}
     container_name: breeze-caddy
     restart: unless-stopped
-    ports:
-      - '80:80'
-      - '443:443'
+    # Sin `ports:` a propósito. En este despliegue Caddy vive DETRÁS del Traefik
+    # de Dokploy, que ya posee el 80 y el 443 del host. Traefik termina el TLS y
+    # reenvía a este contenedor por la red interna; Caddy conserva su papel de
+    # separar API, web y portal (/portal), que replicar en Traefik sería frágil.
     environment:
-      CADDY_SITE_ADDRESS: "${BREEZE_DOMAIN:-:80}"
+      CADDY_SITE_ADDRESS: "${CADDY_SITE_ADDRESS:-:80}"
       ACME_EMAIL: ${ACME_EMAIL:-}
       # Empty (the default) leaves Caddy on Let's Encrypt. Set to `local_certs`
       # in .env when BREEZE_DOMAIN is a name Let's Encrypt cannot reach, so
