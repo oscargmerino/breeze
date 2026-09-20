@@ -55,6 +55,14 @@
 }
 
 {$CADDY_SITE_ADDRESS::80} {
+  # Registro de accesos. Detrás de un proxy externo, la API sólo registra
+  # `route=unmatched` sin la ruta, así que un 308 o un 404 no dicen QUÉ se pidió.
+  # Aquí sí queda la URL completa de cada petición.
+  log {
+    output stdout
+    format json
+  }
+
   # --- Wave 5 Task 7 (final review C1 + I6): GLOBAL inbound assertion strip --
   # Runs before ANY route below, in its own headers handler. Two reasons this
   # lives here rather than inside each `reverse_proxy` as a `header_up -...`:
